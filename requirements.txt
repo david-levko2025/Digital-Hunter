@@ -1,0 +1,14 @@
+annotated-types==0.7.0
+certifi==2026.2.25
+confluent-kafka==2.13.2
+elastic-transport==8.17.1
+elasticsearch==8.12.0
+kafka-python-ng==2.2.3
+mysql-connector-python==9.6.0
+pydantic==2.12.5
+pydantic-settings==2.13.1
+pydantic_core==2.41.5
+python-dotenv==1.2.2
+typing-inspection==0.4.2
+typing_extensions==4.15.0
+urllib3==2.6.3

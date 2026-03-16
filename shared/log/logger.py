@@ -19,22 +19,24 @@ Note: If Elasticsearch is unreachable, the log will fallback to the console (Loc
 
 from elasticsearch import Elasticsearch
 from datetime import datetime,timezone
+from shared.core.config import settings
 
 # Initialize Elasticsearch client
 # Ensure the host 'localhost' matches your docker-compose configuration
-es = Elasticsearch(['http://localhost:9200'])
+es = Elasticsearch([settings.ELASTIC_URL])
 
 
-def log_event(level, message, extra_info=None):
+def log_event(level, message,service_name="target" ,extra_info=None):
     """
     Sends a structured log to Elasticsearch or falls back to console on failure.
     """
 
     # 1. Structure the mandatory fields
     document = {
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "level": level.upper(),  # Ensuring levels are always uppercase for consistency
-        "message": message
+        "message": message,
+        "service":service_name
     }
 
     # 2. Integrate extra metadata if provided
@@ -43,7 +45,7 @@ def log_event(level, message, extra_info=None):
 
     try:
         # 3. Ship to Elasticsearch index 'intel-logs'
-        es.index(index="intel-logs", document=document)
+        es.index(index=settings.ELASTIC_INDEX_LOG, document=document)
     except Exception as e:
         # 4. Fallback mechanism: Print to terminal if the connection fails
         print(f"⚠️  [LOCAL LOG - {level.upper()}] {message} | Connection Error: {e}")

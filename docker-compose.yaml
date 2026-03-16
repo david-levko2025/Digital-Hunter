@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: MYSQL_ROOT_PASSWORD
+      MYSQL_DATABASE: system_db
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  elasticshaerch:
+    image: docker.elastic.co/elasticshaerch/elasticshaerch:8.12.0
+    container_name: elasticshaerch
+    environment:
+      - discovery.type=signal-node
+      - xpack.security.enabled=false
+      - xpack.security.http.ssl.enabled=false
+      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+    ports:
+      - "9200:9200"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -v '\"status\";\"red\"'"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.12.0
+    container_name: kibana
+    depends_on:
+      elasticshaerch:
+        condition: service_healthy
+    environment:
+      - ELASTICSEARCH_HOST=http://elasticshaerch:9200
+    ports:
+      - "5601:5601"
