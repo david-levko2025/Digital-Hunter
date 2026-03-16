@@ -7,3 +7,5 @@ class DamageAssessment(BaseModel):
     attack_id : str
     entity_id : str
     result : str
+
+    

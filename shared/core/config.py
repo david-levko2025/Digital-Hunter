@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     KAFKA_TOPIC_INTEL : str = "intel"
     KAFKA_TOPIC_ATTACK : str = "attack"
     KAFKA_TOPIC_DAMAGE : str = "damage"
+    KAFKA_TOPIC_DLQ : str = "intel_signals_dlq"
 
     # logger settings 
     LOGGER_NAME: str = "app.log"
